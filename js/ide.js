@@ -7,6 +7,10 @@ var blinkStatusLine = ((localStorageGetItem("blink") || "true") === "true");
 var editorMode = localStorageGetItem("editorMode") || "normal";
 var editorModeObject = null;
 
+var url = new URL(url_string);
+var query_param = url.searchParams.get("var1");
+console.log(query_param);
+
 var fontSize = 14;
 
 var MonacoVim;
@@ -212,7 +216,7 @@ function loadSavedSource() {
 
     if (snippet_id.length == 36) {
         $.ajax({
-            url: apiUrl + "/submissions/" + snippet_id + "?fields=source_code,language_id,stdin,stdout,stderr,compile_output,message,time,memory,status,compiler_options,command_line_arguments&base64_encoded=true",
+            url: apiUrl + "/submissions/" + snippet_id + "?fields=source_code,language_id,stdin,stdout,stderr,compile_output,message,time,memory,status,compiler_options,command_line_arguments&base64_encoded=true&var1="+query_param,
             type: "GET",
             success: function(data, textStatus, jqXHR) {
                 sourceEditor.setValue(decode(data["source_code"]));
@@ -270,7 +274,7 @@ function run() {
     var sendRequest = function(data) {
         timeStart = performance.now();
         $.ajax({
-            url: apiUrl + `/submissions?base64_encoded=true&wait=${wait}`,
+            url: apiUrl + `/submissions?base64_encoded=true&wait=${wait}&var1=${query_param}`,
             type: "POST",
             async: true,
             contentType: "application/json",
