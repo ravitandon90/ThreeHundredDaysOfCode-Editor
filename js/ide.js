@@ -216,7 +216,7 @@ function loadSavedSource() {
 
     if (snippet_id.length == 36) {
         $.ajax({
-            url: apiUrl + "/submissions/" + snippet_id + "?fields=source_code,language_id,stdin,stdout,stderr,compile_output,message,time,memory,status,compiler_options,command_line_arguments&base64_encoded=true&var1="+query_param,
+            url: apiUrl + "/submissions/" + snippet_id + "?fields=source_code,language_id,stdin,stdout,stderr,compile_output,message,time,memory,status,compiler_options,command_line_arguments&base64_encoded=true",
             type: "GET",
             success: function(data, textStatus, jqXHR) {
                 sourceEditor.setValue(decode(data["source_code"]));
