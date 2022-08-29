@@ -17,7 +17,6 @@ function getQueryParams(qs) {
     while (tokens = re.exec(qs)) {
         params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
     }
-
     return params;
 }
 
@@ -442,9 +441,7 @@ $(window).resize(function() {
 });
 
 $(document).ready(function () {
-    updateScreenElements();
-
-    console.log("Hey, Judge0 IDE is open-sourced: https://github.com/judge0/ide. Have fun!");
+    updateScreenElements();    
 
     $selectLanguage = $("#select-language");
     $selectLanguage.change(function (e) {

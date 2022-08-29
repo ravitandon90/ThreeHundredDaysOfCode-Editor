@@ -206,3 +206,7 @@ body {
 input[type="text"] {
     width: 205px !important;
 }
+
+.hidden {
+    display: none!important;
+}
