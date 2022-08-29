@@ -7,9 +7,22 @@ var blinkStatusLine = ((localStorageGetItem("blink") || "true") === "true");
 var editorMode = localStorageGetItem("editorMode") || "normal";
 var editorModeObject = null;
 
-var url = new URL(url_string);
-var query_param = url.searchParams.get("var1");
-console.log(query_param);
+function getQueryParams(qs) {
+    qs = qs.split('+').join(' ');
+
+    var params = {},
+        tokens,
+        re = /[?&]?([^=]+)=([^&]*)/g;
+
+    while (tokens = re.exec(qs)) {
+        params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+    }
+
+    return params;
+}
+
+var query = getQueryParams(document.location.search);
+var userId = query.userId;
 
 var fontSize = 14;
 
@@ -268,13 +281,14 @@ function run() {
         stdin: stdinValue,
         compiler_options: compilerOptions,
         command_line_arguments: commandLineArguments,
-        redirect_stderr_to_stdout: true
+        redirect_stderr_to_stdout: true,
+        user_id: userId
     };
 
     var sendRequest = function(data) {
         timeStart = performance.now();
         $.ajax({
-            url: apiUrl + `/submissions?base64_encoded=true&wait=${wait}&var1=${query_param}`,
+            url: apiUrl + `/google/submissions?base64_encoded=true&wait=${wait}`,
             type: "POST",
             async: true,
             contentType: "application/json",
@@ -282,7 +296,8 @@ function run() {
             xhrFields: {
                 withCredentials: apiUrl.indexOf("/secure") != -1 ? true : false
             },
-            success: function (data, textStatus, jqXHR) {
+            success: function (dataStr, textStatus, jqXHR) {
+                const data = JSON.parse(dataStr);
                 console.log(`Your submission token is: ${data.token}`);
                 if (wait == true) {
                     handleResult(data);
@@ -1304,7 +1319,7 @@ var languageIdTable = {
     1024: 24
 }
 
-var extraApiUrl = "https://extra-ce.judge0.com";
+var extraApiUrl = "http://localhost:80";
 var languageApiUrlTable = {
     1001: extraApiUrl,
     1002: extraApiUrl,
