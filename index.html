@@ -61,7 +61,7 @@
             </a>
         </div>
         <div class="left menu">
-            <div class="ui dropdown item site-links on-hover">
+            <div class="ui dropdown item site-links on-hover hidden">
                 File <i class="dropdown icon"></i>
                 <div class="menu">
                     <a class="item" target="_blank" href="/"><i class="file code icon"></i> New File</a>
@@ -152,7 +152,13 @@
                 </div>
             </div>
             <div class="item no-left-padding borderless">
-                <button id="run-btn" class="ui primary labeled icon button"><i class="play icon"></i>Run (F9)</button>
+                <button id="run-btn" class="ui primary labeled icon button"><i class="play icon"></i>Run Code</button>
+            </div>
+            <div class="item no-left-padding borderless">
+                <button id="submit-btn" class="ui primary labeled icon button"><i class="play icon"></i>Submit Code</button>
+            </div>
+            <div class="item no-left-padding borderless">
+                <p id="status-msg"></p>
             </div>
             <div id="navigation-message" class="item borderless">
                 <span class="navigation-message-text"></span>

@@ -45,6 +45,7 @@ var $runBtn;
 var $navigationMessage;
 var $updates;
 var $statusLine;
+var $statusMsg;
 
 var timeStart;
 var timeEnd;
@@ -180,8 +181,6 @@ function handleRunError(jqXHR, textStatus, errorThrown) {
 
 function handleResult(data) {
     timeEnd = performance.now();
-    console.log("It took " + (timeEnd - timeStart) + " ms to get submission result.");
-
     var status = data.status;
     var stdout = decode(data.stdout);
     var compile_output = decode(data.compile_output);
@@ -189,6 +188,7 @@ function handleResult(data) {
     var memory = (data.memory === null ? "-" : data.memory + "KB");
 
     $statusLine.html(`${status.description}, ${time}, ${memory}`);
+    $statusMsg.html(`${status.description}`);
 
     if (blinkStatusLine) {
         $statusLine.addClass("blink");
@@ -295,9 +295,91 @@ function run() {
             xhrFields: {
                 withCredentials: apiUrl.indexOf("/secure") != -1 ? true : false
             },
-            success: function (dataStr, textStatus, jqXHR) {
-                const data = JSON.parse(dataStr);
-                console.log(`Your submission token is: ${data.token}`);
+            success: function (data, textStatus, jqXHR) {                            
+                if (wait == true) {
+                    handleResult(data);
+                } else {
+                    setTimeout(fetchSubmission.bind(null, data.token), check_timeout);
+                }
+            },
+            error: handleRunError
+        });
+    }
+
+    var fetchAdditionalFiles = false;
+    if (parseInt(languageId) === 82) {
+        if (sqliteAdditionalFiles === "") {
+            fetchAdditionalFiles = true;
+            $.ajax({
+                url: `https://minio.judge0.com/public/ide/sqliteAdditionalFiles.base64.txt?${Date.now()}`,
+                type: "GET",
+                async: true,
+                contentType: "text/plain",
+                success: function (responseData, textStatus, jqXHR) {
+                    sqliteAdditionalFiles = responseData;
+                    data["additional_files"] = sqliteAdditionalFiles;
+                    sendRequest(data);
+                },
+                error: handleRunError
+            });
+        }
+        else {
+            data["additional_files"] = sqliteAdditionalFiles;
+        }
+    }
+
+    if (!fetchAdditionalFiles) {
+        sendRequest(data);
+    }
+}
+
+function submitCode() {
+    if (sourceEditor.getValue().trim() === "") {
+        showError("Error", "Source code can't be empty!");
+        return;
+    } else {
+        $runBtn.addClass("loading");
+    }
+
+    document.getElementById("stdout-dot").hidden = true;
+
+    stdoutEditor.setValue("");
+
+    var x = layout.root.getItemsById("stdout")[0];
+    x.parent.header.parent.setActiveContentItem(x);
+
+    var sourceValue = encode(sourceEditor.getValue());
+    var stdinValue = encode(stdinEditor.getValue());
+    var languageId = resolveLanguageId($selectLanguage.val());
+    var compilerOptions = $compilerOptions.val();
+    var commandLineArguments = $commandLineArguments.val();
+
+    if (parseInt(languageId) === 44) {
+        sourceValue = sourceEditor.getValue();
+    }
+
+    var data = {
+        source_code: sourceValue,
+        language_id: languageId,
+        stdin: stdinValue,
+        compiler_options: compilerOptions,
+        command_line_arguments: commandLineArguments,
+        redirect_stderr_to_stdout: true,
+        user_id: userId
+    };
+
+    var sendRequest = function(data) {
+        timeStart = performance.now();
+        $.ajax({
+            url: apiUrl + `/google/submitCodeSolution?base64_encoded=true&wait=${wait}`,
+            type: "POST",
+            async: true,
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            xhrFields: {
+                withCredentials: apiUrl.indexOf("/secure") != -1 ? true : false
+            },
+            success: function (data, textStatus, jqXHR) {
                 if (wait == true) {
                     handleResult(data);
                 } else {
@@ -467,6 +549,10 @@ $(document).ready(function () {
     $runBtn.click(function (e) {
         run();
     });
+    $submitBtn = $('#submit-btn');
+    $submitBtn.click(function (e) {
+        submitCode();
+    });
 
     $navigationMessage = $("#navigation-message span");
     $updates = $("#judge0-more");
@@ -483,6 +569,7 @@ $(document).ready(function () {
     });
 
     $statusLine = $("#status-line");
+    $statusMsg = $('#status-msg');
 
     $(document).on("keydown", "body", function (e) {
         var keyCode = e.keyCode || e.which;
