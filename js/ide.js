@@ -447,8 +447,9 @@ function getProblemTemplateAndDefaultInput(languageId) {
         url: apiUrl + "/google/problemBaseCode?languageId=" + languageId + "&problemId=" + problemId,
         type: "GET",
         async: true,
-        success: function (data, textStatus, jqXHR) {
-            sourceEditor.setValue(decode(data.base_code));            
+        success: function (dataResponse, textStatus, jqXHR) {
+            const data = JSON.parse(dataResponse);
+            sourceEditor.setValue(decode(data.base_code));
         },
         error: handleRunError
     });
