@@ -22,6 +22,7 @@ function getQueryParams(qs) {
 
 var query = getQueryParams(document.location.search);
 var userId = query.userId;
+var problemId = query.problemId;
 
 var fontSize = 14;
 
@@ -281,7 +282,8 @@ function run() {
         compiler_options: compilerOptions,
         command_line_arguments: commandLineArguments,
         redirect_stderr_to_stdout: true,
-        user_id: userId
+        user_id: userId,
+        problem_id: problemId
     };
 
     var sendRequest = function(data) {
@@ -440,12 +442,25 @@ function changeEditorLanguage() {
     apiUrl = resolveApiUrl($selectLanguage.val());
 }
 
+function getProblemTemplateAndDefaultInput(languageId) {
+    $.ajax({
+        url: apiUrl + "/google/problemBaseCode?languageId=" + languageId + "&problemId=" + problemId,
+        type: "GET",
+        async: true,
+        success: function (data, textStatus, jqXHR) {
+            sourceEditor.setValue(decode(data.base_code));            
+        },
+        error: handleRunError
+    });
+}
+
 function insertTemplate() {
     currentLanguageId = parseInt($selectLanguage.val());
-    sourceEditor.setValue(sources[currentLanguageId]);
+    // sourceEditor.setValue(sources[currentLanguageId]);
     stdinEditor.setValue(inputs[currentLanguageId] || "");
     $compilerOptions.val(compilerOptions[currentLanguageId] || "");
     changeEditorLanguage();
+    getProblemTemplateAndDefaultInput(currentLanguageId);
 }
 
 function loadRandomLanguage() {
