@@ -369,7 +369,8 @@ function submitCode() {
         compiler_options: compilerOptions,
         command_line_arguments: commandLineArguments,
         redirect_stderr_to_stdout: true,
-        user_id: userId
+        user_id: userId,
+        problem_id: problemId
     };
 
     var sendRequest = function(data) {
@@ -954,7 +955,6 @@ public class Main {\n\
 ";
 
 var javaScriptSource = "// Insert Your Code Here. \n\
-// Insert Your Code Here. Here are the steps to get started: \n\
 // Step-I: Define the input format using the examples from the problem description. \n\
 // Step-II: Parse input from standard in. \n\
 // Step-III: Write your algorithm to generate the required output. \n\
