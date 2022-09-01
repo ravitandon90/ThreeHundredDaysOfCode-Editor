@@ -181,6 +181,7 @@ function handleRunError(jqXHR, textStatus, errorThrown) {
 }
 
 function handleResult(data) {
+    console.log(data);
     timeEnd = performance.now();
     var status = data.status;
     var stdout = decode(data.stdout);
@@ -297,7 +298,8 @@ function run() {
             xhrFields: {
                 withCredentials: apiUrl.indexOf("/secure") != -1 ? true : false
             },
-            success: function (data, textStatus, jqXHR) {                            
+            success: function (dataIn, textStatus, jqXHR) {                            
+                const data = JSON.parse(dataIn);
                 if (wait == true) {
                     handleResult(data);
                 } else {
@@ -381,8 +383,9 @@ function submitCode() {
             xhrFields: {
                 withCredentials: apiUrl.indexOf("/secure") != -1 ? true : false
             },
-            success: function (data, textStatus, jqXHR) {
+            success: function (dataStr, textStatus, jqXHR) {
                 if (wait == true) {
+                    const data = JSON.parse(dataStr);
                     handleResult(data);
                 } else {
                     setTimeout(fetchSubmission.bind(null, data.token), check_timeout);
@@ -424,7 +427,8 @@ function fetchSubmission(submission_token) {
         url: apiUrl + "/submissions/" + submission_token + "?base64_encoded=true",
         type: "GET",
         async: true,
-        success: function (data, textStatus, jqXHR) {
+        success: function (dataIn, textStatus, jqXHR) {
+            const data = JSON.parse(dataIn);
             if (data.status.id <= 2) { // In Queue or Processing
                 setTimeout(fetchSubmission.bind(null, submission_token), check_timeout);
                 return;
@@ -755,10 +759,10 @@ var cppSource = "\
 #include <iostream>\n\
 \n\
 int main() {\n\
-    // Insert Your Code Here. \n\
-    // Step-I: Define the input format and parset the input as a first step \n\
-    // Step-II: Parse input from standard input \n\
-    // Step-III: Write your algorithm to generate the required output \n\
+    // Insert Your Code Here. Here are the steps to get started: \n\
+    // Step-I: Define the input format using the examples from the problem description. \n\
+    // Step-II: Parse input from standard in. \n\
+    // Step-III: Write your algorithm to generate the required output. \n\
     // Note: In case of any issues use #feedback channel on Discord. \n\
     return 0;\n\
 }\n\
@@ -925,10 +929,10 @@ package main\n\
 import \"fmt\"\n\
 \n\
 func main() {\n\
-    // Insert Your Code Here. \n\
-    // Step-I: Define the input format and parset the input as a first step \n\
-    // Step-II: Parse input from standard input \n\
-    // Step-III: Write your algorithm to generate the required output \n\
+    // Insert Your Code Here. Here are the steps to get started: \n\
+    // Step-I: Define the input format using the examples from the problem description. \n\
+    // Step-II: Parse input from standard in. \n\
+    // Step-III: Write your algorithm to generate the required output. \n\
     // Note: In case of any issues use #feedback channel on Discord. \n\
 }\n\
 ";
@@ -940,19 +944,20 @@ var haskellSource = "main = putStrLn \"hello, world\"";
 var javaSource = "\
 public class Main {\n\
     public static void main(String[] args) {\n\
-        // Insert Your Code Here. \n\
-        // Step-I: Define the input format and parset the input as a first step \n\
-        // Step-II: Parse input from standard input \n\
-        // Step-III: Write your algorithm to generate the required output \n\
+        // Insert Your Code Here. Here are the steps to get started: \n\
+        // Step-I: Define the input format using the examples from the problem description. \n\
+        // Step-II: Parse input from standard in. \n\
+        // Step-III: Write your algorithm to generate the required output. \n\
         // Note: In case of any issues use #feedback channel on Discord. \n\
     }\n\
 }\n\
 ";
 
 var javaScriptSource = "// Insert Your Code Here. \n\
-// Step-I: Define the input format and parset the input as a first step \n\
-// Step-II: Parse input from standard input \n\
-// Step-III: Write your algorithm to generate the required output \n\
+// Insert Your Code Here. Here are the steps to get started: \n\
+// Step-I: Define the input format using the examples from the problem description. \n\
+// Step-II: Parse input from standard in. \n\
+// Step-III: Write your algorithm to generate the required output. \n\
 // Note: In case of any issues use #feedback channel on Discord. \n\
 ";
 
@@ -996,10 +1001,10 @@ print \"hello, $name\";\n\
 
 var phpSource = "\
 <?php\n\
-// Insert Your Code Here. \n\
-// Step-I: Define the input format and parset the input as a first step \n\
-// Step-II: Parse input from standard input \n\
-// Step-III: Write your algorithm to generate the required output \n\
+// Insert Your Code Here. Here are the steps to get started: \n\
+// Step-I: Define the input format using the examples from the problem description. \n\
+// Step-II: Parse input from standard in. \n\
+// Step-III: Write your algorithm to generate the required output. \n\
 // Note: In case of any issues use #feedback channel on Discord. \n\
 ?>\n\
 ";
@@ -1011,10 +1016,10 @@ var prologSource = "\
 main :- write('hello, world\\n').\n\
 ";
 
-var pythonSource =  "# Insert Your Code Here. \n\
-# Step-I: Define the input format and parset the input as a first step \n\
-# Step-II: Parse input from standard input \n\
-# Step-III: Write your algorithm to generate the required output \n\
+var pythonSource =  "# Insert Your Code Here. Here are the steps to get started: \n\
+# Step-I: Define the input format using the examples from the problem description. \n\
+# Step-II: Parse input from standard in. \n\
+# Step-III: Write your algorithm to generate the required output. \n\
 # Note: In case of any issues use #feedback channel on Discord. \n\
 ";
 
