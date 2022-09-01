@@ -457,11 +457,11 @@ function getProblemTemplateAndDefaultInput(languageId) {
 
 function insertTemplate() {
     currentLanguageId = parseInt($selectLanguage.val());
-    // sourceEditor.setValue(sources[currentLanguageId]);
-    stdinEditor.setValue(inputs[currentLanguageId] || "");
+    sourceEditor.setValue(sources[currentLanguageId]);
+    // stdinEditor.setValue(inputs[currentLanguageId] || "");
     $compilerOptions.val(compilerOptions[currentLanguageId] || "");
     changeEditorLanguage();
-    getProblemTemplateAndDefaultInput(currentLanguageId);
+    //getProblemTemplateAndDefaultInput(currentLanguageId);
 }
 
 function loadRandomLanguage() {
@@ -755,7 +755,11 @@ var cppSource = "\
 #include <iostream>\n\
 \n\
 int main() {\n\
-    std::cout << \"hello, world\" << std::endl;\n\
+    // Insert Your Code Here. \n\
+    // Step-I: Define the input format and parset the input as a first step \n\
+    // Step-II: Parse input from standard input \n\
+    // Step-III: Write your algorithm to generate the required output \n\
+    // Note: In case of any issues use #feedback channel on Discord. \n\
     return 0;\n\
 }\n\
 ";
@@ -921,7 +925,11 @@ package main\n\
 import \"fmt\"\n\
 \n\
 func main() {\n\
-    fmt.Println(\"hello, world\")\n\
+    // Insert Your Code Here. \n\
+    // Step-I: Define the input format and parset the input as a first step \n\
+    // Step-II: Parse input from standard input \n\
+    // Step-III: Write your algorithm to generate the required output \n\
+    // Note: In case of any issues use #feedback channel on Discord. \n\
 }\n\
 ";
 
@@ -932,12 +940,21 @@ var haskellSource = "main = putStrLn \"hello, world\"";
 var javaSource = "\
 public class Main {\n\
     public static void main(String[] args) {\n\
-        System.out.println(\"hello, world\");\n\
+        // Insert Your Code Here. \n\
+        // Step-I: Define the input format and parset the input as a first step \n\
+        // Step-II: Parse input from standard input \n\
+        // Step-III: Write your algorithm to generate the required output \n\
+        // Note: In case of any issues use #feedback channel on Discord. \n\
     }\n\
 }\n\
 ";
 
-var javaScriptSource = "console.log(\"hello, world\");";
+var javaScriptSource = "// Insert Your Code Here. \n\
+// Step-I: Define the input format and parset the input as a first step \n\
+// Step-II: Parse input from standard input \n\
+// Step-III: Write your algorithm to generate the required output \n\
+// Note: In case of any issues use #feedback channel on Discord. \n\
+";
 
 var kotlinSource = "\
 fun main() {\n\
@@ -979,7 +996,11 @@ print \"hello, $name\";\n\
 
 var phpSource = "\
 <?php\n\
-print(\"hello, world\\n\");\n\
+// Insert Your Code Here. \n\
+// Step-I: Define the input format and parset the input as a first step \n\
+// Step-II: Parse input from standard input \n\
+// Step-III: Write your algorithm to generate the required output \n\
+// Note: In case of any issues use #feedback channel on Discord. \n\
 ?>\n\
 ";
 
@@ -990,7 +1011,12 @@ var prologSource = "\
 main :- write('hello, world\\n').\n\
 ";
 
-var pythonSource = "print(\"hello, world\")";
+var pythonSource =  "# Insert Your Code Here. \n\
+# Step-I: Define the input format and parset the input as a first step \n\
+# Step-II: Parse input from standard input \n\
+# Step-III: Write your algorithm to generate the required output \n\
+# Note: In case of any issues use #feedback channel on Discord. \n\
+";
 
 var rSource = "cat(\"hello, world\\n\")";
 
@@ -1271,7 +1297,7 @@ var sources = {
     51: csharpSource,
     52: cppSource,
     53: cppSource,
-    54: competitiveProgrammingSource,
+    54: cppSource,
     55: lispSource,
     56: dSource,
     57: elixirSource,
