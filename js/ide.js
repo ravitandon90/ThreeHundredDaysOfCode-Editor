@@ -180,8 +180,14 @@ function handleRunError(jqXHR, textStatus, errorThrown) {
     $runBtn.removeClass("loading");
 }
 
-function handleResult(data) {
-    console.log(data);
+function handleCodeSubmission(data) {    
+    var status = data.status;
+    $statusLine.html(`${status.description}`);
+    $statusMsg.html(`${status.description}`);
+    $submitBtn.removeClass("loading");
+}
+
+function handleResult(data) {    
     timeEnd = performance.now();
     var status = data.status;
     var stdout = decode(data.stdout);
@@ -342,7 +348,7 @@ function submitCode() {
         showError("Error", "Source code can't be empty!");
         return;
     } else {
-        $runBtn.addClass("loading");
+        $submitBtn.addClass("loading");
     }
 
     document.getElementById("stdout-dot").hidden = true;
@@ -387,7 +393,7 @@ function submitCode() {
             success: function (dataStr, textStatus, jqXHR) {
                 if (wait == true) {
                     const data = JSON.parse(dataStr);
-                    handleResult(data);
+                    handleCodeSubmission(data);
                 } else {
                     setTimeout(fetchSubmission.bind(null, data.token), check_timeout);
                 }
