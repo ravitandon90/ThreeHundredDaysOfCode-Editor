@@ -1,5 +1,3 @@
-var defaultUrl = localStorageGetItem("api-url") || "http://localhost:80";
-var apiUrl = defaultUrl;
 var wait = localStorageGetItem("wait") || true;
 var check_timeout = 300;
 
@@ -21,6 +19,7 @@ function getQueryParams(qs) {
 }
 
 var query = getQueryParams(document.location.search);
+var apiUrl = query.apiUrl || "http://localhost:80";
 var userId = query.userId;
 var problemId = query.problemId;
 
