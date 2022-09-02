@@ -1,6 +1,5 @@
 var wait = localStorageGetItem("wait") || true;
 var check_timeout = 300;
-var defaultUrl = "http://localhost:80";
 
 var blinkStatusLine = ((localStorageGetItem("blink") || "true") === "true");
 var editorMode = localStorageGetItem("editorMode") || "normal";
@@ -20,7 +19,7 @@ function getQueryParams(qs) {
 }
 
 var query = getQueryParams(document.location.search);
-var apiUrl = query.apiUrl || defaultUrl;
+var apiUrl = query.apiUrl;
 var userId = query.userId;
 var problemId = query.problemId;
 
@@ -527,7 +526,7 @@ function resolveLanguageId(id) {
 
 function resolveApiUrl(id) {
     id = parseInt(id);
-    return languageApiUrlTable[id] || defaultUrl;
+    return languageApiUrlTable[id] || apiUrl;
 }
 
 function editorsUpdateFontSize(fontSize) {
@@ -1456,7 +1455,7 @@ var languageIdTable = {
     1024: 24
 }
 
-var extraApiUrl = "http://localhost:80";
+var extraApiUrl = apiUrl;
 var languageApiUrlTable = {
     1001: extraApiUrl,
     1002: extraApiUrl,
