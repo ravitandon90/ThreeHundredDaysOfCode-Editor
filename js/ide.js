@@ -1,5 +1,6 @@
 var wait = localStorageGetItem("wait") || true;
 var check_timeout = 300;
+var defaultUrl = "http://localhost:80";
 
 var blinkStatusLine = ((localStorageGetItem("blink") || "true") === "true");
 var editorMode = localStorageGetItem("editorMode") || "normal";
@@ -19,7 +20,7 @@ function getQueryParams(qs) {
 }
 
 var query = getQueryParams(document.location.search);
-var apiUrl = query.apiUrl || "http://localhost:80";
+var apiUrl = query.apiUrl || defaultUrl;
 var userId = query.userId;
 var problemId = query.problemId;
 
