@@ -22,6 +22,7 @@ var query = getQueryParams(document.location.search);
 var apiUrl = query.apiUrl;
 var userId = query.userId;
 var problemId = query.problemId;
+var submissionId = query.submissionId;
 
 var fontSize = 14;
 
@@ -465,13 +466,31 @@ function getProblemTemplateAndDefaultInput(languageId) {
     });
 }
 
+function getDataFromSubmissionId() {
+    console.log('in get data from submission id');
+    $.ajax({
+        url: apiUrl + "/google/submission?submissionId=" + submissionId,
+        type: "GET",
+        async: true,
+        success: function (dataResponse, textStatus, jqXHR) {
+            const data = JSON.parse(dataResponse);
+            sourceEditor.setValue(decode(data.data.submissionCode));
+        },
+        error: handleRunError
+    });
+}
+
 function insertTemplate() {
+    console.log('in insert template');
     currentLanguageId = parseInt($selectLanguage.val());
     sourceEditor.setValue(sources[currentLanguageId]);
     // stdinEditor.setValue(inputs[currentLanguageId] || "");
     $compilerOptions.val(compilerOptions[currentLanguageId] || "");
     changeEditorLanguage();
     //getProblemTemplateAndDefaultInput(currentLanguageId);
+    if (submissionId !== 'undefined') {
+        getDataFromSubmissionId();
+    }
 }
 
 function loadRandomLanguage() {
