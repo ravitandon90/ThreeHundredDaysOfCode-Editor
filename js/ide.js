@@ -22,9 +22,10 @@ var query = getQueryParams(document.location.search);
 var apiUrl = query.apiUrl;
 var userId = query.userId;
 var problemId = query.problemId;
-var submissionId = query.submissionId;
+var sessionId = query.sessionId;
 
 var fontSize = 14;
+var timeOutIntervalSec = 30;
 
 var MonacoVim;
 var MonacoEmacs;
@@ -466,15 +467,42 @@ function getProblemTemplateAndDefaultInput(languageId) {
     });
 }
 
-function getDataFromSubmissionId() {
-    console.log('in get data from submission id');
+function saveSession() {
+    console.log('Triggering a save of the session');
+    if (!sessionId) return;
+    const data = {
+        userId: userId,
+        sessionId: sessionId,
+        problemId: problemId,
+        language: currentLanguageId,
+        solutionCode: encode(sourceEditor.getValue())
+    };    
     $.ajax({
-        url: apiUrl + "/google/submission?submissionId=" + submissionId,
+        url: apiUrl + `/google/session?base64_encoded=true&wait=${wait}`,
+        type: "POST",
+        async: true,
+        contentType: "application/json",
+        data: JSON.stringify(data),
+        xhrFields: {
+            withCredentials: apiUrl.indexOf("/secure") != -1 ? true : false
+        },
+        success: function (dataIn, textStatus, jqXHR) {
+            const data = JSON.parse(dataIn);
+            console.log(data);
+        },
+        error: handleRunError
+    });
+}
+
+function getSession() {
+    console.log('In get data from session id');
+    $.ajax({
+        url: apiUrl + "/google/session?userId=" + userId + "&sessionId=" + sessionId,
         type: "GET",
         async: true,
-        success: function (dataResponse, textStatus, jqXHR) {
-            const data = JSON.parse(dataResponse);
-            sourceEditor.setValue(decode(data.data.submissionCode));
+        success: function (response, textStatus, jqXHR) {
+            // TODO(Ravi): Also set the language that the user chose for this session.
+            sourceEditor.setValue(decode(JSON.parse(response).submissionCode));
         },
         error: handleRunError
     });
@@ -482,14 +510,15 @@ function getDataFromSubmissionId() {
 
 function insertTemplate() {
     console.log('in insert template');
+    console.log(sessionId)
     currentLanguageId = parseInt($selectLanguage.val());
     sourceEditor.setValue(sources[currentLanguageId]);
     // stdinEditor.setValue(inputs[currentLanguageId] || "");
     $compilerOptions.val(compilerOptions[currentLanguageId] || "");
     changeEditorLanguage();
     //getProblemTemplateAndDefaultInput(currentLanguageId);
-    if (submissionId !== 'undefined') {
-        getDataFromSubmissionId();
+    if (sessionId !== 'undefined') {
+        getSession();
     }
 }
 
@@ -657,6 +686,9 @@ $(document).ready(function () {
 
     loadMessages();
 
+    // TODO(Ravi): This should be implemented using OnDidChangeContent + Debouncing.
+    setInterval(saveSession, 10000);
+
     require(["vs/editor/editor.main", "monaco-vim", "monaco-emacs"], function (ignorable, MVim, MEmacs) {
         layout = new GoldenLayout(layoutConfig, $("#site-content"));
 
@@ -679,7 +711,7 @@ $(document).ready(function () {
 
             sourceEditor.getModel().onDidChangeContent(function (e) {
                 currentLanguageId = parseInt($selectLanguage.val());
-                isEditorDirty = sourceEditor.getValue() != sources[currentLanguageId];
+                isEditorDirty = sourceEditor.getValue() != sources[currentLanguageId];                
             });
 
             sourceEditor.onDidLayoutChange(resizeEditor);
