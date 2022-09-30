@@ -469,7 +469,7 @@ function getProblemTemplateAndDefaultInput(languageId) {
 
 function saveSession() {
     console.log('Triggering a save of the session');
-    if (!sessionId) return;
+    if (sessionId === 'undefined') return;
     const data = {
         userId: userId,
         sessionId: sessionId,
@@ -502,15 +502,16 @@ function getSession() {
         async: true,
         success: function (response, textStatus, jqXHR) {
             // TODO(Ravi): Also set the language that the user chose for this session.
-            sourceEditor.setValue(decode(JSON.parse(response).submissionCode));
+            const responseJson = JSON.parse(response);
+            if (responseJson.hasOwnProperty("submissionCode")) {
+                sourceEditor.setValue(decode(responseJson.submissionCode));
+            }            
         },
         error: handleRunError
     });
 }
 
 function insertTemplate() {
-    console.log('in insert template');
-    console.log(sessionId)
     currentLanguageId = parseInt($selectLanguage.val());
     sourceEditor.setValue(sources[currentLanguageId]);
     // stdinEditor.setValue(inputs[currentLanguageId] || "");
